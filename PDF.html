@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+
+</style>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            touch-action: none;
+            background-color: rgb(215, 216, 210);
+            color: #6C132B;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background-color: rgb(215, 216, 210);
+            padding: clamp(5px, 2vw, 10px);
+            box-sizing: border-box;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            z-index: 700;
+        }
+        
+        .nav-button-container {
+            background: rgb(215, 216, 210);
+            padding: clamp(5px, 2vw, 10px);
+            padding-bottom: 0;
+            display: flex;
+            gap: clamp(5px, 2vw, 10px);
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            width: auto;
+            height: auto;
+        }
+        
+        .nav-button {
+            background: rgba(215, 216, 210, 0.167);
+            border: 2px solid #38ABF6;
+            padding: clamp(5px, 1.5vw, 10px) clamp(5px, 2vw, 10px);
+            margin-bottom: clamp(5px, 2vw, 10px);
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: clamp(14px, 2vw, 18px);
+            transition: all 0.3s ease;
+            color: #38ABF6;
+        }
+        
+        .nav-button:hover {
+            background: #38ABF6;
+            border-color: #357abd;
+            color: rgb(215, 216, 210);
+            filter: invert(1);
+        }
+
+
+        .logo-container {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1002;
+            cursor: pointer;
+            width: auto;
+            height: auto;
+            background: rgb(215, 216, 210);
+            border-radius: 0 0 10px 10px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 0 clamp(5px, 2vw, 10px) clamp(5px, 2vw, 10px);
+        }
+
+        .logo {
+            margin-top: clamp(5px, 2vw, 10px);
+            width: clamp(60px, 10vw, 100px);
+            height: auto;
+            transition: all 0.3s;
+            background: rgba(215, 216, 210, 0.167);
+            border: 2px solid #38ABF6;
+            padding: clamp(5px, 1vw, 10px);
+            border-radius: 5px;
+            filter: none;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            background: #38ABF6;
+            border-color: #357abd;
+            filter: invert(1);
+        }
+
+        .side-menu {
+            position: fixed;
+            top: calc(clamp(60px, 10vw, 100px) + clamp(5px, 1.01vw, 5px) * 2);
+            left: 50%;
+            transform: translateX(-50%) scaleY(0);
+            transform-origin: top;
+            width: 300px;
+            max-height: 40vh;
+            background: rgb(215, 216, 210);
+            z-index: 1001;
+            padding: 20px 20px 10px;
+            margin-top: clamp(5px, 10vw, 10px);
+            transition: .3s cubic-bezier(.4,0,.2,1);
+            overflow-y: scroll;
+            box-shadow: 0 0 15px #0001;
+            border-radius: 15px;
+            opacity: 0;
+            pointer-events: none;
+            scrollbar: thin #6C132B rgba(56, 171, 246, 0.1);
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .side-menu::-webkit-scrollbar {
+            width: 8px;
+            &-track {
+                background: #b25656cc;
+                border-radius: 4px;
+                margin: 10px 0;
+            }
+            &-thumb {
+                background: #6C132B;
+                border-radius: 4px;
+                border: 1px solid #0002;
+                margin: 10px 0;
+            }
+        }
+
+        .side-menu.active {
+            transform: translateX(-50%) scaleY(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu-section {
+            margin-bottom: 15px;
+            
+            h2 {
+                color: #38ABF6;
+                font-size: 1.2em;
+                margin-bottom: 10px;
+                padding-bottom: 5px;
+                border-bottom: 2px solid #38ABF6;
+                font-family: 'Oswald', sans-serif;
+            }
+            
+            ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            li {
+                padding: 4px 0;
+                cursor: pointer;
+                color: #6C132B;
+                transition: color .3s;
+                font-family: 'Oswald', sans-serif;
+                
+                &:hover {
+                    color: #38ABF6;
+                }
+            }
+        }
+
+        /* Add these new styles */
+        .info-button {
+            background: rgba(215, 216, 210, 1);
+            border: 2px solid #38ABF6;
+            padding: clamp(5px, 1.5vw, 5px) clamp(5px, 2vw, 5px);
+            margin-bottom: clamp(5px, 2vw, 10px);
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: clamp(14px, 2vw, 18px);
+            transition: all 0.3s ease;
+            color: #38ABF6;
+        }
+
+        .info-button:hover {
+            background: #38ABF6;
+            border-color: #357abd;
+            color: rgb(215, 216, 210);
+            filter: invert(1);
+        }
+
+        .info-overlay {
+            position: fixed;
+            bottom: calc(clamp(5px, 2vw, 10px) + 50px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px; /* Match menu width */
+            background: rgb(215, 216, 210);
+            padding: clamp(10px, 2vw, 15px);
+            border-radius: 10px;
+            z-index: 1001;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            margin-bottom: clamp(5px, 2vw, 10px);
+        }
+
+        .info-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .info-overlay h1 {
+            color: #38ABF6;
+            margin-bottom: 10px;
+            font-size: clamp(20px, 2.5vw, 28px);
+            font-family: 'Oswald', sans-serif;
+            margin-top: 0;
+        }
+
+        .info-overlay h2 {
+            color: #357abd;
+            margin-bottom: 15px;
+            font-size: clamp(16px, 2vw, 20px);
+            font-family: 'Oswald', sans-serif;
+            margin-top: 0;
+        }
+
+        .info-overlay p {
+            line-height: 1.5;
+            font-size: clamp(13px, 1.8vw, 15px);
+            color: #6C132B;
+            font-family: 'Oswald', sans-serif;
+            max-width: 260px;
+            margin: 0 auto;
+        }
+
+        .menu-section h2 a {
+            color: #38ABF6;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .menu-section h2 a:hover {
+            color: #357abd;
+        }
+
+        /* Add CSS to ensure image display */
+        #currentImage {
+            position: absolute;
+            top: clamp(5px, 2vw, 10px);
+            left: clamp(5px, 2vw, 10px);
+            right: clamp(5px, 2vw, 10px);
+            bottom: clamp(5px, 2vw, 10px);
+            width: calc(100% - 2 * clamp(5px, 2vw, 10px));
+            height: calc(100% - 2 * clamp(5px, 2vw, 10px));
+            object-fit: scale-down;
+            background-color: rgb(215, 216, 210);
+            border-radius: 10px;
+        }
+
+        #currentVideo {
+            position: absolute;
+            top: clamp(5px, 2vw, 10px);
+            left: clamp(5px, 2vw, 10px);
+            right: clamp(5px, 2vw, 10px);
+            bottom: clamp(5px, 2vw, 10px);
+            width: calc(100% - 2 * clamp(5px, 2vw, 10px));
+            height: calc(100% - 2 * clamp(5px, 2vw, 10px));
+            object-fit: cover;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .menu-item {
+            cursor: pointer;
+        }
+
+        /* Preview styles */
+        .preview-container {
+           
+            position: fixed;
+            bottom:15%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: clamp(5px, 2vw, 10px);
+            width: 325px;
+            height: 150px;
+            border-radius: 15px;
+            z-index: 1003;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            overflow: hidden;
+            background: rgb(215, 216, 210);
+            padding: clamp(5px, 2vw, 5px);
+        }
+
+        .preview-container.active {
+            opacity: 1;
+        }
+
+        .preview-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            display: block;
+        }
+
+        #previewOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        /* Ensure container and other elements stay above the overlay */
+        #container, #menu, #nextButton, #prevButton {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Add transition styles to the video and image elements */
+        #currentVideo, #currentImage {
+            transition: opacity 0.3s ease;
+            opacity: 1;
+        }
+        #currentVideo:not([style*="display: block"]),
+        #currentImage:not([style*="display: block"]) {
+            opacity: 0;
+        }
+
+        .contact-buttons-container {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            position: absolute;
+            top: 70%;  /* Move down from 50% to 70% */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            width: 70%;  /* Slightly narrower */
+            max-width: 100px;  /* Smaller max width */
+        }
+
+        .contact-button {
+            background: rgba(215, 216, 210, 1);
+            border: 2px solid #38ABF6;
+            padding: 12px;  /* Smaller padding */
+            border-radius: 5px;
+            color: #38ABF6;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-family: 'Oswald', sans-serif;
+            cursor: pointer;
+            font-size: clamp(14px, 2vw, 18px);  /* Smaller font size */
+        }
+
+        .contact-button:hover {
+            background: #38ABF6;
+            border-color: #357abd;
+            color: rgb(215, 216, 210);
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo Button -->
+    <div class="logo-container">
+        <img src="../../Portfolio/LOGO.png" alt="Logo" class="logo">
+    </div>
+    
+    <!-- Side Menu -->
+    <div class="side-menu">
+       
+       <div class="menu-section">
+            <h2><a href="#" onclick="currentIndex=0; updateMedia(videos[currentIndex]); return false;">Studio Siabi</a></h2>
+            <ul>
+                <li>About Me</li>
+                
+            </ul>
+        </div>
+       <div class="menu-section">
+            <h2><a href="#" onclick="currentIndex=2; updateMedia(videos[currentIndex]); return false;">Digital Production</a></h2>
+            <ul>
+                <li data-preview="cold_heart.mp4">Cold Heart</li>
+                <li data-preview="dhmis.mp4">Brain Friends</li>
+                <li data-preview="critter.mp4">CRITTER: FERAL</li>
+                <li data-preview="volvy.mp4">Return of Volvy</li>
+                <li data-preview="moggie.mp4">Cat Personalities</li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <h2><a href="#" onclick="currentIndex=8; updateMedia(videos[currentIndex]); return false;">Set & Stage Design</a></h2>
+            <ul>
+                <li>Es Devlin Studio</li>
+                <li data-preview="beyonce.mp4">Beyonce's Rennaissance World Tour</li>
+                <li data-preview="the_weeknd.mp4">The Weeknd's After Hours Til Dawn Tour</li>
+                <li data-preview="bad_bunny.mp4">Bad Bunny's Most Wanted Tour</li>
+                <li data-preview="motive.mp4">The Motive & the Cue</li>
+                <li data-preview="es_devlin.mp4">An Atlas of Es Devlin</li>
+                <li data-preview="gucci.mp4">Gucci Cosmos</li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <h2><a href="#" onclick="currentIndex=16; updateMedia(videos[currentIndex]); return false;">Personal Work</a></h2>
+            <ul>
+                <li data-preview="alien.mp4">Alien Invasion</li>
+                <li data-preview="oger.mp4">O.G.E.R. Themepark</li>
+                <li data-preview="nuclear_happiness.mp4">Nuclear Happiness</li>
+                <li data-preview="mapping_wind.mp4">Mapping Wind</li>
+            </ul>
+        </div>
+        <div class="menu-section">
+            <h2><a href="#" onclick="currentIndex=21; updateMedia(videos[currentIndex]); return false;">Contact Me</a></h2>
+        </div>
+    </div>
+
+    <!-- Preview Container -->
+    <div class="preview-container">
+        <img class="preview-media" src="" alt="Preview">
+        <video class="preview-media" autoplay muted loop>
+            <source src="" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="video-container">
+        <img id="currentImage" src="01_name.png" alt="Welcome Image" style="background: transparent;">
+        <video id="currentVideo" autoplay playsinline loop style="display:block;">
+            <source src="" type="image/png">
+        </video>
+        <div id="contactButtons" class="contact-buttons-container"></div>
+    </div>
+    
+    <div class="navigation">
+        <div class="nav-button-container">
+            <button class="nav-button" onclick="previousPage()">
+                ←
+                
+            </button>
+            <button class="info-button" onclick="toggleInfo()">i</button>
+            <button class="nav-button" onclick="nextPage()">
+                →
+                
+               
+            </button>
+        </div>
+    </div>
+
+    <!-- Add the info overlay -->
+    <div class="info-overlay">
+        <h1 id="projectTitle"></h1>
+        <h2 id="projectSubtitle"></h2>
+        <p id="projectDescription"></p>
+        <div id="contactButtons" class="contact-buttons-container"></div>
+    </div>
+
+    <script>
+        // Define project data first
+        const projectData = [
+            {
+                media: '01_name.png',
+                type: 'image',
+                title: 'Welcome',
+                subtitle: 'Portfolio Navigation',
+                description: 'Welcome to my portfolio! Here\'s how to navigate:\n\n' +
+                            '→ Use the arrow buttons or swipe left/right to navigate through projects\n\n' +
+                            '→ Click the "i" button or hover over it to see project details\n\n' +
+                            '→ Click the logo at the top to access the menu and jump to specific projects\n\n' +
+                            '→ Hover over the arrow buttons to preview the next/previous project',
+                scale: 'scale-down'  // First title card stays as scale-down
+            },
+            {
+                media: '02_about.jpg',
+                type: 'image',
+                scale: 'contain'
+            },
+            {
+                media: '03_digital.jpg',
+                type: 'image',
+                scale: 'cover'
+            },
+            {
+                media: 'cold_heart.mp4',
+                type: 'video',
+                title: 'Cold Heart',
+                subtitle: '3D Build at BlinkInk',
+                description: 'I spearheaded the design and creation of atmospheric props that shaped the disco dance floors in Cold Heart, drawing inspiration from Hilma af Klint\'s paintings to achieve a distinctive aesthetic.'
+            },
+            {
+                media: 'dhmis.mp4',
+                type: 'video',
+                title: 'Don\'t Hug Me I\'m Scared: Brain Friends',
+                subtitle: '3D Build & AI Prompt Writing at BlinkInk',
+                description: 'I asssisted with the organisation and rendering of the scenes'
+            },
+            {
+                media: 'critter.mp4',
+                type: 'video',
+                title: 'CRITTER: FERAL',
+                subtitle: 'AI Prompt Writer & Video Editor',
+                description: 'This video was created entirely through AI prompt writing, where I carefully crafted and refined text prompts to generate each frame. The entire narrative and visual style was achieved by iteratively developing prompts that produced the desired aesthetic and storytelling elements.'
+            },
+            {
+                media: 'volvy.mp4',
+                type: 'video',
+                title: 'Return of Volvy',
+                subtitle: '3D Build at BlinkInk',
+                description: 'Developed a virtual set for "The Return of Volvy" for Devolver Direct, integrated into post-production, and produced AI-generated imagery depicting the characters in their youth.'
+            },
+            {
+                media: 'moggie.mp4',
+                type: 'video',
+                title: 'Cat Personalities',
+                subtitle: 'AI Prompt Writer',
+                description: 'I made social media content for Moggie.Me to help them promote their app. This task involved writing AI prompts to generate images for their 5 cat personalities',
+                playbackRate: 1// Play at 1% speed for slow motion
+            },
+            {
+                media: '04_setstage.jpg',
+                    type: 'image',
+                    scale: 'cover'
+            },
+            {
+                media: '04_es.jpg',
+                    type: 'image',
+                    scale: 'contain'
+            },
+            {
+                media: 'beyonce.mp4',
+                type: 'video',
+                title: 'Beyonce\'s Rennaissance World Tour',
+                subtitle: 'Studio Assistant at Es Devlin Studio',
+            },
+            {
+                media: 'the_weeknd.mp4',
+                type: 'video',
+                title: 'The Weeknd\'s After Hours Til Dawn Tour',
+                subtitle: 'Studio Assistant at Es Devlin Studio',
+            },
+            {
+                media: 'bad_bunny.mp4',
+                type: 'video',
+                title: 'Bad Bunny\'s Most Wanted Tour',
+                subtitle: 'Studio Assistant at Es Devlin Studio',
+            },
+            {
+                media: 'motive.mp4',
+                type: 'video',
+                title: 'The Motive & the Cue',
+                subtitle: 'Studio Assistant at Es Devlin Studio',
+            },
+            {
+                media: 'gucci.mp4',
+                type: 'video',
+                title: 'Gucci Cosmos at 180 the Strand',
+                subtitle: 'Studio Assistant at Es Devlin Studio',
+            },
+            {
+                media: 'es_devlin.mp4',
+                type: 'video',
+                title: 'An Atlas of Es Devlin',
+                subtitle: 'Studio Assistant at Es Devlin Studio',
+            },
+            {
+                media: '05_personal.jpg',
+                    type: 'image',
+                    scale: 'cover'
+            },
+            {
+                media: 'alien.mp4',
+                type: 'video',
+                title: 'Alien Invasion',
+                subtitle: 'Cinematic and Video Game Architecture MArch',
+            },  
+            {
+                media: 'oger.mp4',
+                type: 'video',
+                title: 'O.G.E.R. Themepark',
+                subtitle: 'Engineering and Architectural Design MEng: Year 3',
+            },
+            {
+                media: 'nuclear_happiness.mp4',
+                type: 'video',
+                title: 'Nuclear Happiness',
+                subtitle: 'Engineering and Architectural Design MEng: Year 4',
+            }, 
+            {
+                media: 'mapping_wind.mp4',
+                type: 'video',
+                title: 'Mapping Wind',
+                subtitle: 'Engineering and Architectural Design MEng: Year 2',
+            },  
+            {
+                media: '06_contact.jpg',
+                type: 'image',
+                scale: 'cover',
+                title: 'Contact Me',
+                description: 'Email: rosa.siabi@gmail.com \nPhone: +44 7824645000 \nLinkedIn: linkedin.com/in/rosasiabi',
+                isContactPage: true,
+                buttons: [
+                    { text: 'Email Me', action: 'mailto:rosa.siabi@gmail.com' },
+                    { text: 'Text me', action: 'sms:+447824645000' },
+                    { text: 'View LinkedIn', action: 'https://www.linkedin.com/in/rosa-siabi-aa9656192/' }
+                ]
+            },
+           
+            
+
+        ];
+
+        // Create videos array from projectData
+        const videos = projectData.map(item => item.media);
+
+        let currentIndex = 0;
+        const videoElement = document.getElementById('currentVideo');
+        const imageElement = document.getElementById('currentImage');
+        const container = document.querySelector('.video-container');
+        const prevButton = document.querySelector('.navigation button:first-child');
+        const nextButton = document.querySelector('.navigation button:last-child');
+        const previewContainer = document.querySelector('.preview-container');
+        const previewImage = previewContainer.querySelector('img');
+        const previewVideo = previewContainer.querySelector('video');
+        
+        // Add preview functionality to menu items
+        document.querySelectorAll('.menu-section li').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                const previewSrc = item.getAttribute('data-preview');
+                if (previewSrc) {
+                    const isVideo = previewSrc.toLowerCase().endsWith('.mp4');
+                    
+                    previewImage.style.display = isVideo ? 'none' : 'block';
+                    previewVideo.style.display = isVideo ? 'block' : 'none';
+                    
+                    if (isVideo) {
+                        previewVideo.src = previewSrc;
+                        previewVideo.play();
+                    } else {
+                        previewImage.src = previewSrc;
+                    }
+                    
+                    previewContainer.classList.add('active');
+                }
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                previewContainer.classList.remove('active');
+                previewVideo.pause();
+            });
+        });
+        
+        // Logo menu functionality
+        const logo = document.querySelector('.logo');
+        const sideMenu = document.querySelector('.side-menu');
+        
+        logo.addEventListener('click', () => {
+            sideMenu.classList.toggle('active');
+        });
+        
+        function updateMedia(src) {
+            const videoElement = document.getElementById('currentVideo');
+            const imageElement = document.getElementById('currentImage');
+            
+            const currentProject = projectData[currentIndex];
+            const objectFit = currentProject.scale || 'cover';  // Default to cover for all other entries
+            
+            imageElement.style.objectFit = objectFit;
+            videoElement.style.objectFit = objectFit;
+            
+            // Prevent jitter by waiting for new media to load before switching
+            const isVideo = src.toLowerCase().endsWith('.mp4');
+            
+            if (isVideo) {
+                // Load video first
+                videoElement.src = src;
+                videoElement.load();
+                
+                videoElement.onloadeddata = () => {
+                    // Only switch display after video is ready
+                    imageElement.style.display = 'none';
+                    videoElement.style.display = 'block';
+                    videoElement.volume = 0.1; // Set volume to 25%
+                    videoElement.play();
+                };
+            } else {
+                // Load image first
+                const tempImage = new Image();
+                tempImage.src = src;
+                
+                tempImage.onload = () => {
+                    // Only switch display after image is ready
+                    videoElement.style.display = 'none';
+                    imageElement.style.display = 'block';
+                    imageElement.src = src;
+                };
+            }
+
+            // Update info if available
+            if (currentProject) {
+                document.getElementById('projectTitle').textContent = currentProject.title || '';
+                document.getElementById('projectSubtitle').textContent = currentProject.subtitle || '';
+                document.getElementById('projectDescription').textContent = currentProject.description || '';
+                
+                // Handle contact buttons
+                const buttonsContainer = document.getElementById('contactButtons');
+                if (buttonsContainer) {
+                    buttonsContainer.innerHTML = '';
+                    
+                    if (currentProject.isContactPage && currentProject.buttons) {
+                        buttonsContainer.style.display = 'flex';
+                        currentProject.buttons.forEach(button => {
+                            const btn = document.createElement('a');
+                            btn.textContent = button.text;
+                            btn.href = button.action;
+                            btn.className = 'contact-button';
+                            btn.target = "_blank";
+                            buttonsContainer.appendChild(btn);
+                        });
+                    } else {
+                        buttonsContainer.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        // Update the toggleInfo function
+        function toggleInfo() {
+            const infoOverlay = document.querySelector('.info-overlay');
+            const projectTitle = document.getElementById('projectTitle');
+            const projectSubtitle = document.getElementById('projectSubtitle');
+            const projectDescription = document.getElementById('projectDescription');
+            
+            if (!infoOverlay.classList.contains('active')) {
+                const currentProject = projectData[currentIndex];
+                projectTitle.textContent = currentProject.title;
+                projectSubtitle.textContent = currentProject.subtitle;
+                projectDescription.textContent = currentProject.description;
+                
+                // Add buttons for contact page
+                const buttonsContainer = document.getElementById('contactButtons');
+                if (buttonsContainer) {
+                    buttonsContainer.innerHTML = '';
+                    
+                    if (currentProject.isContactPage && currentProject.buttons) {
+                        buttonsContainer.style.display = 'flex';
+                        currentProject.buttons.forEach(button => {
+                            const btn = document.createElement('a');
+                            btn.textContent = button.text;
+                            btn.href = button.action;
+                            btn.className = 'contact-button';
+                            btn.target = "_blank";
+                            buttonsContainer.appendChild(btn);
+                        });
+                    } else {
+                        buttonsContainer.style.display = 'none';
+                    }
+                }
+            }
+            
+            infoOverlay.classList.toggle('active');
+        }
+
+        // Add click event listener to close info overlay when clicking outside
+        document.addEventListener('click', (e) => {
+            const infoOverlay = document.querySelector('.info-overlay');
+            const infoButton = document.querySelector('.info-button');
+            
+            // Close if overlay is active and click is outside the overlay and info button
+            if (infoOverlay.classList.contains('active') && 
+                !infoOverlay.contains(e.target) && 
+                e.target !== infoButton) {
+                infoOverlay.classList.remove('active');
+            }
+        });
+
+        // Add hover functionality to info button
+        const infoButton = document.querySelector('.info-button');
+        const infoOverlay = document.querySelector('.info-overlay');
+
+        infoButton.addEventListener('mouseenter', () => {
+            const currentProject = projectData[currentIndex];
+            projectTitle.textContent = currentProject.title;
+            projectSubtitle.textContent = currentProject.subtitle;
+            projectDescription.textContent = currentProject.description;
+            infoOverlay.classList.add('active');
+        });
+
+        infoButton.addEventListener('mouseleave', (e) => {
+            // Check if the mouse isn't moving to the overlay
+            const rect = infoOverlay.getBoundingClientRect();
+            if (!(e.clientX >= rect.left && 
+                  e.clientX <= rect.right && 
+                  e.clientY >= rect.top && 
+                  e.clientY <= rect.bottom)) {
+                infoOverlay.classList.remove('active');
+            }
+        });
+
+        // Add hover functionality to info overlay
+        infoOverlay.addEventListener('mouseleave', () => {
+            infoOverlay.classList.remove('active');
+        });
+
+        // Update the menuVideoMap object to link menu items correctly
+        const menuVideoMap = {
+            // Digital Production
+            // Rosa Siabi
+            'About Me': 1,
+
+            // Digital Production
+            'Digital Production': 2,
+            'Cold Heart': 3,
+            'Brain Friends': 4,
+            'CRITTER: FERAL': 5,
+            'Return of Volvy': 6,
+            'Cat Personalities': 7,
+
+            // Set & Stage Design
+            'Set & Stage Design': 8,
+            'Es Devlin Studio': 9,
+            'Beyonce\'s Rennaissance World Tour': 10,
+            'The Weeknd\'s After Hours Til Dawn Tour': 11,
+            'Bad Bunny\'s Most Wanted Tour': 12,
+            'The Motive & the Cue': 13,
+            'Gucci Cosmos': 14,
+            'An Atlas of Es Devlin': 15,
+
+            // Personal Work
+            'Personal Work': 16,
+            'Alien Invasion': 17,
+            'O.G.E.R. Themepark': 18,
+            'Nuclear Happiness': 19,
+            'Mapping Wind': 20,
+
+            // Contact Me
+            'Contact Me': 21
+        };
+
+        // Add click event listeners to menu items
+        document.querySelectorAll('.menu-section li').forEach(item => {
+            item.addEventListener('click', () => {
+                const videoIndex = menuVideoMap[item.textContent];
+                if (videoIndex !== null && videoIndex !== undefined) {
+                    currentIndex = videoIndex;
+                    updateMedia(videos[currentIndex]);
+                    sideMenu.classList.remove('active'); // Close the menu
+                    document.querySelector('.info-overlay').classList.remove('active'); // Close info overlay
+                }
+            });
+
+            // Add visual feedback for available videos
+            if (menuVideoMap[item.textContent] === null) {
+                item.style.opacity = '0.5';
+                item.style.cursor = 'default';
+            }
+        });
+
+        // Add these after projectData definition
+        let loadedMediaIndices = new Set();
+        const INITIAL_LOAD_COUNT = 3;
+        const LOAD_AHEAD_COUNT = 1;
+
+        function loadMedia(index) {
+            if (index >= projectData.length || loadedMediaIndices.has(index)) return;
+            
+            const project = projectData[index];
+            if (!project.media) return;
+
+            loadedMediaIndices.add(index);
+            
+            if (project.media.toLowerCase().endsWith('.mp4')) {
+                const video = document.createElement('video');
+                video.src = project.media;
+                video.preload = 'auto';
+                video.style.display = 'none';
+                document.body.appendChild(video);
+                console.log(`Loading video: ${project.media}`);
+            } else if (project.media.match(/\.(png|jpg|jpeg|gif)$/i)) {
+                const img = new Image();
+                img.src = project.media;
+                console.log(`Loading image: ${project.media}`);
+            }
+        }
+
+        function loadInitialMedia() {
+            // Load first page and next 3 pages
+            for (let i = 0; i <= INITIAL_LOAD_COUNT; i++) {
+                loadMedia(i);
+            }
+        }
+
+        // Update the nextPage function
+        function nextPage() {
+            if (currentIndex < videos.length - 1) {
+                currentIndex++;
+                updateMedia(videos[currentIndex]);
+                document.querySelector('.info-overlay').classList.remove('active');
+                document.getElementById('meVideo').style.display = 'none'; // Hide meVideo
+                loadMedia(currentIndex + INITIAL_LOAD_COUNT);
+            }
+        }
+
+        // Update the previousPage function
+        function previousPage() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateMedia(videos[currentIndex]);
+                document.querySelector('.info-overlay').classList.remove('active');
+            }
+        }
+
+        // Update the DOMContentLoaded event listener
+        document.addEventListener('DOMContentLoaded', () => {
+            updateMedia(projectData[0].media || '');
+            loadInitialMedia();
+        });
+
+        // Add click event listener to close side menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const sideMenu = document.querySelector('.side-menu');
+            const logo = document.querySelector('.logo');
+
+            // Close if side menu is active and click is outside the menu and logo
+            if (sideMenu.classList.contains('active') && 
+                !sideMenu.contains(e.target) && 
+                e.target !== logo) {
+                sideMenu.classList.remove('active');
+            }
+        });
+
+        // Add keyboard event listener for left/right arrow keys to control page navigation
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    e.preventDefault(); // Prevent browser back navigation
+                    prevPage();
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    nextPage();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>
