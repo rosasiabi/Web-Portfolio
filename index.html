@@ -449,6 +449,90 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .nav-button-container {
+                padding: clamp(4px, 1.8vw, 10px);
+                gap: clamp(4px, 1.8vw, 10px);
+            }
+            
+            .nav-button, .info-button {
+                padding: clamp(5px, 1.2vw, 10px) clamp(5px, 1.8vw, 10px);
+                margin-bottom: clamp(4px, 1.8vw, 10px);
+                font-size: clamp(14px, 2.2vw, 18px);
+            }
+            
+            .logo {
+                width: clamp(60px, 15vw, 120px);
+                padding: clamp(4px, 1vw, 8px);
+            }
+            
+            .logo-container {
+                padding: 0 clamp(6px, 2.5vw, 12px) clamp(6px, 2.5vw, 12px);
+            }
+            
+            .side-menu {
+                width: 85%;
+                max-height: 60vh;
+                top: calc(clamp(50px, 10vw, 90px) + clamp(4px, 1vw, 8px) * 2);
+            }
+            
+            .info-overlay {
+                width: 85%;
+                bottom: calc(clamp(4px, 1.8vw, 10px) + 45px);
+            }
+            
+            .preview-container {
+                width: 70%;
+                height: 100px;
+            }
+            
+            .menu-section h2 {
+                font-size: 1.1em;
+            }
+            
+            .menu-section li {
+                padding: 3px 0;
+                font-size: 0.9em;
+            }
+            
+            /* Preserve original object-fit settings */
+            #currentImage, #currentVideo {
+                object-fit: inherit;
+            }
+            
+            /* Only apply object-fit: contain when explicitly needed */
+            #currentImage[style*="object-fit: scale-down"], 
+            #currentVideo[style*="object-fit: scale-down"] {
+                object-fit: scale-down !important;
+            }
+            
+            #currentImage[style*="object-fit: contain"], 
+            #currentVideo[style*="object-fit: contain"] {
+                object-fit: contain !important;
+            }
+            
+            #currentImage[style*="object-fit: cover"], 
+            #currentVideo[style*="object-fit: cover"] {
+                object-fit: cover !important;
+            }
+            
+            .contact-buttons-container {
+                width: 42.5%;  /* Half of the previous 85% */
+                max-width: 42.5%;
+            }
+            
+            .contact-button {
+                padding: 10px;
+                font-size: clamp(14px, 2.2vw, 18px);
+            }
+        }
+        
+        /* Add touch swipe support */
+        .video-container {
+            touch-action: pan-y;
+        }
     </style>
 </head>
 <body>
@@ -506,7 +590,7 @@
             </ul>
         </div>
         <div class="menu-section">
-            <h2><a href="#" onclick="currentIndex=21; updateMedia(videos[currentIndex]); return false;">Contact Me</a></h2>
+            <h2><a href="#" onclick="currentIndex=20; updateMedia(videos[currentIndex]); return false;">Contact</a></h2>
         </div>
     </div>
 
@@ -687,9 +771,9 @@
                 description: 'Email: rosa.siabi@gmail.com \nPhone: +44 7824645000 \nLinkedIn: linkedin.com/in/rosasiabi',
                 isContactPage: true,
                 buttons: [
-                    { text: 'Email Me', action: 'mailto:rosa.siabi@gmail.com' },
-                    { text: 'Text me', action: 'sms:+447824645000' },
-                    { text: 'View LinkedIn', action: 'https://www.linkedin.com/in/rosa-siabi-aa9656192/' }
+                    { text: 'Email', action: 'mailto:rosa.siabi@gmail.com' },
+                    { text: 'Text', action: 'sms:+447824645000' },
+                    { text: 'LinkedIn', action: 'https://www.linkedin.com/in/rosa-siabi-aa9656192/' }
                 ]
             },
            
@@ -942,7 +1026,7 @@
             'Nuclear Happiness': 19,
 
             // Contact Me
-            'Contact Me': 20
+            'Contact': 20  // Changed from 20 to 21 to match the correct index
         };
 
         // Add click event listeners to menu items
@@ -1089,6 +1173,47 @@
                     break;
             }
         });
+
+        // Add touch swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        container.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        container.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            const swipeThreshold = 50; // Minimum distance for a swipe
+            if (touchEndX < touchStartX - swipeThreshold) {
+                // Swipe left - go to next
+                nextPage();
+            } else if (touchEndX > touchStartX + swipeThreshold) {
+                // Swipe right - go to previous
+                previousPage();
+            }
+        }
+        
+        // Ensure videos play on mobile
+        document.addEventListener('click', () => {
+            if (videoElement.paused && videoElement.style.display !== 'none') {
+                videoElement.play();
+            }
+        });
+        
+        // Fix for iOS Safari viewport height issues
+        function setVhProperty() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        window.addEventListener('resize', setVhProperty);
+        window.addEventListener('orientationchange', setVhProperty);
+        setVhProperty();
     </script>
 </body>
 </html>
