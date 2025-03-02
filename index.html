@@ -413,9 +413,51 @@
                 transparent 100%
             );
         }
+
+        /* Loading indicator styles */
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(215, 216, 210);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #38ABF6;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            color: #6C132B;
+            font-family: 'Oswald', sans-serif;
+            font-size: 18px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Loading indicator -->
+    <div class="loading-container" id="loadingIndicator">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading portfolio...</div>
+    </div>
+    
     <!-- Logo Button -->
     <div class="logo-container">
         <img src="LOGO.png" alt="Logo" class="logo">
@@ -478,7 +520,7 @@
 
     <div class="video-container">
         <img id="currentImage" src="me.png" alt="Welcome Image">
-        <video id="currentVideo" autoplay muted playsinline style="display: none;">
+        <video id="currentVideo" autoplay muted playsinline loop style="display: none;">
             <source src="me.mp4" type="video/mp4">
         </video>
         <div id="contactButtons" class="contact-buttons-container"></div>
@@ -710,70 +752,85 @@
             const currentProject = projectData[currentIndex];
             const objectFit = currentProject.scale || 'cover';  // Default to cover for all other entries
             
+            // Set object-fit before showing the elements
             imageElement.style.objectFit = objectFit;
             videoElement.style.objectFit = objectFit;
             
-            // Prevent jitter by waiting for new media to load before switching
-            const isVideo = src.toLowerCase().endsWith('.mp4');
+            // Fade out current media first
+            videoElement.style.opacity = 0;
+            imageElement.style.opacity = 0;
             
-            if (isVideo) {
-                // Load video first
-                videoElement.src = src;
-                videoElement.load();
+            // Short timeout to allow fade out
+            setTimeout(() => {
+                const isVideo = src.toLowerCase().endsWith('.mp4');
                 
-                // Add edge-blur class only for 01_name.mp4
-                if (src.includes('01_name.mp4')) {
-                    videoElement.classList.add('edge-blur');
-                } else {
-                    videoElement.classList.remove('edge-blur');
-                }
-                
-                videoElement.onloadeddata = () => {
-                    // Only switch display after video is ready
-                    imageElement.style.display = 'none';
-                    videoElement.style.display = 'block';
-                    videoElement.volume = 0.1; // Set volume to 10%
-                    videoElement.play();
-                };
-            } else {
-                // Load image first
-                const tempImage = new Image();
-                tempImage.src = src;
-                
-                tempImage.onload = () => {
-                    // Only switch display after image is ready
-                    videoElement.style.display = 'none';
-                    imageElement.style.display = 'block';
-                    imageElement.src = src;
-                };
-            }
-
-            // Update info if available
-            if (currentProject) {
-                document.getElementById('projectTitle').textContent = currentProject.title || '';
-                document.getElementById('projectSubtitle').textContent = currentProject.subtitle || '';
-                document.getElementById('projectDescription').textContent = currentProject.description || '';
-                
-                // Handle contact buttons
-                const buttonsContainer = document.getElementById('contactButtons');
-                if (buttonsContainer) {
-                    buttonsContainer.innerHTML = '';
+                if (isVideo) {
+                    // Load video
+                    videoElement.src = src;
+                    videoElement.load();
                     
-                    if (currentProject.isContactPage && currentProject.buttons) {
-                        buttonsContainer.style.display = 'flex';
-                        currentProject.buttons.forEach(button => {
-                            const btn = document.createElement('a');
-                            btn.textContent = button.text;
-                            btn.href = button.action;
-                            btn.className = 'contact-button';
-                            btn.target = "_blank";
-                            buttonsContainer.appendChild(btn);
-                        });
+                    // Add edge-blur class only for 01_name.mp4
+                    if (src.includes('01_name.mp4')) {
+                        videoElement.classList.add('edge-blur');
                     } else {
-                        buttonsContainer.style.display = 'none';
+                        videoElement.classList.remove('edge-blur');
+                    }
+                    
+                    videoElement.onloadeddata = () => {
+                        // Only switch display after video is ready
+                        imageElement.style.display = 'none';
+                        videoElement.style.display = 'block';
+                        videoElement.volume = 0.1; // Set volume to 10%
+                        videoElement.play();
+                        // Fade in video
+                        setTimeout(() => {
+                            videoElement.style.opacity = 1;
+                        }, 50);
+                    };
+                } else {
+                    // Load image
+                    const tempImage = new Image();
+                    tempImage.src = src;
+                    
+                    tempImage.onload = () => {
+                        // Only switch display after image is ready
+                        videoElement.style.display = 'none';
+                        imageElement.style.display = 'block';
+                        imageElement.src = src;
+                        // Fade in image
+                        setTimeout(() => {
+                            imageElement.style.opacity = 1;
+                        }, 50);
+                    };
+                }
+
+                // Update info if available
+                if (currentProject) {
+                    document.getElementById('projectTitle').textContent = currentProject.title || '';
+                    document.getElementById('projectSubtitle').textContent = currentProject.subtitle || '';
+                    document.getElementById('projectDescription').textContent = currentProject.description || '';
+                    
+                    // Handle contact buttons
+                    const buttonsContainer = document.getElementById('contactButtons');
+                    if (buttonsContainer) {
+                        buttonsContainer.innerHTML = '';
+                        
+                        if (currentProject.isContactPage && currentProject.buttons) {
+                            buttonsContainer.style.display = 'flex';
+                            currentProject.buttons.forEach(button => {
+                                const btn = document.createElement('a');
+                                btn.textContent = button.text;
+                                btn.href = button.action;
+                                btn.className = 'contact-button';
+                                btn.target = "_blank";
+                                buttonsContainer.appendChild(btn);
+                            });
+                        } else {
+                            buttonsContainer.style.display = 'none';
+                        }
                     }
                 }
-            }
+            }, 300); // Wait for fade out
         }
 
         // Update the toggleInfo function
@@ -912,6 +969,10 @@
         const INITIAL_LOAD_COUNT = 3;
         const LOAD_AHEAD_COUNT = 1;
 
+        // Track loading progress
+        let totalMediaToLoad = projectData.length;
+        let loadedMediaCount = 0;
+        
         function loadMedia(index) {
             if (index >= projectData.length || loadedMediaIndices.has(index)) return;
             
@@ -925,18 +986,59 @@
                 video.src = project.media;
                 video.preload = 'auto';
                 video.style.display = 'none';
+                
+                // Track when media is loaded
+                video.onloadeddata = () => {
+                    loadedMediaCount++;
+                    checkAllMediaLoaded();
+                };
+                
                 document.body.appendChild(video);
                 console.log(`Loading video: ${project.media}`);
             } else if (project.media.match(/\.(png|jpg|jpeg|gif)$/i)) {
                 const img = new Image();
                 img.src = project.media;
+                
+                // Track when media is loaded
+                img.onload = () => {
+                    loadedMediaCount++;
+                    checkAllMediaLoaded();
+                };
+                
                 console.log(`Loading image: ${project.media}`);
             }
         }
+        
+        function checkAllMediaLoaded() {
+            // Hide loading indicator when all media is loaded or after a timeout
+            if (loadedMediaCount >= totalMediaToLoad) {
+                hideLoadingIndicator();
+            }
+        }
+        
+        function hideLoadingIndicator() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.opacity = '0';
+            
+            // Remove from DOM after fade out
+            setTimeout(() => {
+                loadingIndicator.style.display = 'none';
+            }, 500);
+        }
+        
+        // Update the DOMContentLoaded event listener
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set a maximum loading time (10 seconds)
+            setTimeout(hideLoadingIndicator, 10000);
+            
+            loadInitialMedia(); // Load all media files
+            updateMedia(projectData[0].media || '');
+        });
 
+        // Update the loadInitialMedia function to load all media
         function loadInitialMedia() {
-            // Load first page and next 3 pages
-            for (let i = 0; i <= INITIAL_LOAD_COUNT; i++) {
+            // Load all media files at once
+            for (let i = 0; i < projectData.length; i++) {
                 loadMedia(i);
             }
         }
@@ -960,12 +1062,6 @@
                 document.querySelector('.info-overlay').classList.remove('active');
             }
         }
-
-        // Update the DOMContentLoaded event listener
-        document.addEventListener('DOMContentLoaded', () => {
-            updateMedia(projectData[0].media || '');
-            loadInitialMedia();
-        });
 
         // Add click event listener to close side menu when clicking outside
         document.addEventListener('click', (e) => {
