@@ -103,9 +103,10 @@
         }
         
         .logo:hover {
+            filter: invert(1);            
             background: #38ABF6;
             border-color: #357abd;
-            filter: invert(1);
+            
         }
 
         .side-menu {
@@ -126,7 +127,19 @@
             border-radius: 15px;
             opacity: 0;
             pointer-events: none;
-            scrollbar: thin #6C132B rgba(56, 171, 246, 0.1);
+            /* Custom scrollbar styles for WebKit browsers */
+            &::-webkit-scrollbar {
+                width: 8px;
+            }
+            &::-webkit-scrollbar-track {
+                background: #b25656cc;
+                border-radius: 4px;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #6C132B;
+                border-radius: 4px;
+                border: 1px solid #0002;
+            }
             font-family: 'Oswald', sans-serif;
         }
 
@@ -383,12 +396,29 @@
             border-color: #357abd;
             color: rgb(215, 216, 210);
         }
+
+        .edge-blur {
+            -webkit-mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 15%,
+                black 85%,
+                transparent 100%
+            );
+            mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 15%,
+                black 85%,
+                transparent 100%
+            );
+        }
     </style>
 </head>
 <body>
     <!-- Logo Button -->
     <div class="logo-container">
-        <img src="../../Portfolio/LOGO.png" alt="Logo" class="logo">
+        <img src="LOGO.png" alt="Logo" class="logo">
     </div>
     
     <!-- Side Menu -->
@@ -431,7 +461,6 @@
                 <li data-preview="alien.mp4">Alien Invasion</li>
                 <li data-preview="oger.mp4">O.G.E.R. Themepark</li>
                 <li data-preview="nuclear_happiness.mp4">Nuclear Happiness</li>
-                <li data-preview="mapping_wind.mp4">Mapping Wind</li>
             </ul>
         </div>
         <div class="menu-section">
@@ -448,9 +477,9 @@
     </div>
 
     <div class="video-container">
-        <img id="currentImage" src="01_name.png" alt="Welcome Image" style="background: transparent;">
-        <video id="currentVideo" autoplay playsinline loop style="display:block;">
-            <source src="" type="image/png">
+        <img id="currentImage" src="me.png" alt="Welcome Image">
+        <video id="currentVideo" autoplay muted playsinline style="display: none;">
+            <source src="me.mp4" type="video/mp4">
         </video>
         <div id="contactButtons" class="contact-buttons-container"></div>
     </div>
@@ -482,8 +511,8 @@
         // Define project data first
         const projectData = [
             {
-                media: '01_name.png',
-                type: 'image',
+                media: '01_name.mp4',
+                type: 'video',
                 title: 'Welcome',
                 subtitle: 'Portfolio Navigation',
                 description: 'Welcome to my portfolio! Here\'s how to navigate:\n\n' +
@@ -609,12 +638,6 @@
                 subtitle: 'Engineering and Architectural Design MEng: Year 4',
             }, 
             {
-                media: 'mapping_wind.mp4',
-                type: 'video',
-                title: 'Mapping Wind',
-                subtitle: 'Engineering and Architectural Design MEng: Year 2',
-            },  
-            {
                 media: '06_contact.jpg',
                 type: 'image',
                 scale: 'cover',
@@ -698,11 +721,18 @@
                 videoElement.src = src;
                 videoElement.load();
                 
+                // Add edge-blur class only for 01_name.mp4
+                if (src.includes('01_name.mp4')) {
+                    videoElement.classList.add('edge-blur');
+                } else {
+                    videoElement.classList.remove('edge-blur');
+                }
+                
                 videoElement.onloadeddata = () => {
                     // Only switch display after video is ready
                     imageElement.style.display = 'none';
                     videoElement.style.display = 'block';
-                    videoElement.volume = 0.1; // Set volume to 25%
+                    videoElement.volume = 0.1; // Set volume to 10%
                     videoElement.play();
                 };
             } else {
@@ -853,10 +883,9 @@
             'Alien Invasion': 17,
             'O.G.E.R. Themepark': 18,
             'Nuclear Happiness': 19,
-            'Mapping Wind': 20,
 
             // Contact Me
-            'Contact Me': 21
+            'Contact Me': 20
         };
 
         // Add click event listeners to menu items
