@@ -842,87 +842,67 @@
             const imageElement = document.getElementById('currentImage');
             
             const currentProject = projectData[currentIndex];
-            const objectFit = currentProject.scale || 'cover';  // Default to cover for all other entries
+            const objectFit = currentProject.scale || 'cover';
             
-            // Set object-fit before showing the elements
             imageElement.style.objectFit = objectFit;
             videoElement.style.objectFit = objectFit;
             
-            // Fade out current media first
-            videoElement.style.opacity = 0;
-            imageElement.style.opacity = 0;
+            const isVideo = src.toLowerCase().endsWith('.mp4');
             
-            // Short timeout to allow fade out
-            setTimeout(() => {
-                const isVideo = src.toLowerCase().endsWith('.mp4');
+            if (isVideo) {
+                // Show video immediately
+                imageElement.style.display = 'none';
+                videoElement.style.display = 'block';
+                videoElement.src = src;
+                videoElement.volume = 0.1;
+                videoElement.play();
+                videoElement.style.opacity = 1;
                 
-                if (isVideo) {
-                    // Load video
-                    videoElement.src = src;
-                    videoElement.load();
-                    
-                    // Add edge-blur class only for 01_name.mp4
-                    if (src.includes('01_name.mp4')) {
-                        videoElement.classList.add('edge-blur');
-                    } else {
-                        videoElement.classList.remove('edge-blur');
-                    }
-                    
-                    videoElement.onloadeddata = () => {
-                        // Only switch display after video is ready
-                        imageElement.style.display = 'none';
-                        videoElement.style.display = 'block';
-                        videoElement.volume = 0.1; // Set volume to 10%
-                        videoElement.play();
-                        // Fade in video
-                        setTimeout(() => {
-                            videoElement.style.opacity = 1;
-                        }, 50);
-                    };
+                // Add edge-blur class if needed
+                if (src.includes('01_name.mp4')) {
+                    videoElement.classList.add('edge-blur');
                 } else {
-                    // Load image
-                    const tempImage = new Image();
-                    tempImage.src = src;
-                    
-                    tempImage.onload = () => {
-                        // Only switch display after image is ready
-                        videoElement.style.display = 'none';
-                        imageElement.style.display = 'block';
-                        imageElement.src = src;
-                        // Fade in image
-                        setTimeout(() => {
-                            imageElement.style.opacity = 1;
-                        }, 50);
-                    };
+                    videoElement.classList.remove('edge-blur');
                 }
-
-                // Update info if available
-                if (currentProject) {
-                    document.getElementById('projectTitle').textContent = currentProject.title || '';
-                    document.getElementById('projectSubtitle').textContent = currentProject.subtitle || '';
-                    document.getElementById('projectDescription').textContent = currentProject.description || '';
+            } else {
+                // Show image immediately
+                videoElement.style.display = 'none';
+                imageElement.style.display = 'block';
+                imageElement.src = src;
+                imageElement.style.opacity = 1;
+            }
+            
+            // Update info if available
+            if (currentProject) {
+                document.getElementById('projectTitle').textContent = currentProject.title || '';
+                document.getElementById('projectSubtitle').textContent = currentProject.subtitle || '';
+                document.getElementById('projectDescription').textContent = currentProject.description || '';
+                
+                // Handle contact buttons
+                const buttonsContainer = document.getElementById('contactButtons');
+                if (buttonsContainer) {
+                    buttonsContainer.innerHTML = '';
                     
-                    // Handle contact buttons
-                    const buttonsContainer = document.getElementById('contactButtons');
-                    if (buttonsContainer) {
-                        buttonsContainer.innerHTML = '';
-                        
-                        if (currentProject.isContactPage && currentProject.buttons) {
-                            buttonsContainer.style.display = 'flex';
-                            currentProject.buttons.forEach(button => {
-                                const btn = document.createElement('a');
-                                btn.textContent = button.text;
-                                btn.href = button.action;
-                                btn.className = 'contact-button';
-                                btn.target = "_blank";
-                                buttonsContainer.appendChild(btn);
-                            });
-                        } else {
-                            buttonsContainer.style.display = 'none';
-                        }
+                    if (currentProject.isContactPage && currentProject.buttons) {
+                        buttonsContainer.style.display = 'flex';
+                        currentProject.buttons.forEach(button => {
+                            const btn = document.createElement('a');
+                            btn.textContent = button.text;
+                            btn.href = button.action;
+                            btn.className = 'contact-button';
+                            btn.target = "_blank";
+                            buttonsContainer.appendChild(btn);
+                        });
+                    } else {
+                        buttonsContainer.style.display = 'none';
                     }
                 }
-            }, 300); // Wait for fade out
+            }
+            
+            // Preload next item in background
+            if (currentIndex < projectData.length - 1) {
+                setTimeout(() => loadMedia(currentIndex + 1), 500);
+            }
         }
 
         // Update the toggleInfo function
@@ -1069,93 +1049,76 @@
             if (index >= projectData.length || loadedMediaIndices.has(index)) return;
             
             const project = projectData[index];
-            if (!project.media) return;
+            if (!project || !project.media) return;
 
             loadedMediaIndices.add(index);
             
-            if (project.media.toLowerCase().endsWith('.mp4')) {
-                const video = document.createElement('video');
-                video.src = project.media;
-                video.preload = 'auto';
-                video.style.display = 'none';
-                
-                // Track when media is loaded
-                video.onloadeddata = () => {
-                    loadedMediaCount++;
-                    checkAllMediaLoaded();
-                };
-                
-                document.body.appendChild(video);
-                console.log(`Loading video: ${project.media}`);
-            } else if (project.media.match(/\.(png|jpg|jpeg|gif)$/i)) {
-                const img = new Image();
-                img.src = project.media;
-                
-                // Track when media is loaded
-                img.onload = () => {
-                    loadedMediaCount++;
-                    checkAllMediaLoaded();
-                };
-                
-                console.log(`Loading image: ${project.media}`);
-            }
-        }
-        
-        function checkAllMediaLoaded() {
-            // Hide loading indicator when all media is loaded or after a timeout
-            if (loadedMediaCount >= totalMediaToLoad) {
-                hideLoadingIndicator();
-            }
+            // Just mark it as loaded without waiting for full load
+            loadedMediaCount++;
         }
         
         function hideLoadingIndicator() {
             const loadingIndicator = document.getElementById('loadingIndicator');
-            loadingIndicator.style.opacity = '0';
-            
-            // Remove from DOM after fade out
-            setTimeout(() => {
-                loadingIndicator.style.display = 'none';
-            }, 500);
+            loadingIndicator.style.display = 'none'; // Immediately hide without fade
         }
         
-        // Update the DOMContentLoaded event listener
+        // Immediately hide loading indicator on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
-            // Set a maximum loading time (10 seconds)
-            setTimeout(hideLoadingIndicator, 10000);
+            // Hide loading indicator almost immediately
+            setTimeout(hideLoadingIndicator, 800);
             
-            loadInitialMedia(); // Load the first three media files
-            updateMedia(projectData[0].media || ''); // Update to show the first media
+            // Only load and display the first media item
+            if (projectData.length > 0) {
+                const firstItem = projectData[0];
+                
+                // Directly set the first media without waiting for full load
+                if (firstItem.type === 'video') {
+                    const videoElement = document.getElementById('currentVideo');
+                    videoElement.src = firstItem.media;
+                    videoElement.style.display = 'block';
+                    imageElement.style.display = 'none';
+                    videoElement.play();
+                    videoElement.style.opacity = 1;
+                } else {
+                    const imageElement = document.getElementById('currentImage');
+                    imageElement.src = firstItem.media;
+                    imageElement.style.display = 'block';
+                    videoElement.style.display = 'none';
+                    imageElement.style.opacity = 1;
+                }
+                
+                // Load next item in background with delay
+                setTimeout(() => {
+                    if (projectData.length > 1) loadMedia(1);
+                }, 1000);
+            }
         });
 
-        // Update the loadInitialMedia function to load all media
-        function loadInitialMedia() {
-            // Load all media files at once
-            for (let i = 0; i < projectData.length; i++) {
-                loadMedia(i);
-            }
-        }
-
-        // Update the nextPage function
+        // Optimize the nextPage function to prioritize responsiveness
         function nextPage() {
             if (currentIndex < videos.length - 1) {
                 currentIndex++;
                 updateMedia(videos[currentIndex]);
                 document.querySelector('.info-overlay').classList.remove('active');
 
-                // Preload the next media file
-                loadMedia(currentIndex + 1);
+                // Preload the next media file with a slight delay to prioritize current display
+                setTimeout(() => {
+                    loadMedia(currentIndex + 1);
+                }, 100);
             }
         }
-
-        // Update the previousPage function
+        
+        // Optimize the previousPage function similarly
         function previousPage() {
             if (currentIndex > 0) {
                 currentIndex--;
                 updateMedia(videos[currentIndex]);
                 document.querySelector('.info-overlay').classList.remove('active');
 
-                // Preload the previous media file
-                loadMedia(currentIndex - 1);
+                // Preload with a slight delay
+                setTimeout(() => {
+                    loadMedia(currentIndex - 1);
+                }, 100);
             }
         }
 
