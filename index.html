@@ -458,55 +458,63 @@
         }
 
         /* Mobile-specific styles */
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (max-device-width: 768px) {
             .nav-button-container {
-                padding: clamp(8px, 3vw, 12px);
+                padding: clamp(20px, 6vw, 30px);
                 padding-bottom: 0;
-                gap: clamp(10px, 3vw, 15px);
+                gap: clamp(20px, 6vw, 30px);
+                border-radius: var(--common-border-radius);
             }
             
             .nav-button, .info-button {
-                padding: clamp(12px, 3.5vw, 18px) clamp(15px, 4vw, 22px);
-                margin-bottom: clamp(8px, 3vw, 15px);
-                font-size: clamp(18px, 3vw, 24px);
-                border-width: 3px;
+                padding: clamp(30px, 7vw, 40px) clamp(35px, 8vw, 45px);
+                margin-bottom: clamp(20px, 6vw, 30px);
+                font-size: clamp(30px, 5vw, 36px);
+                border-width: 5px;
+                border-radius: var(--button-border-radius);
             }
             
             .logo {
                 width: auto; /* Let width adjust based on height */
-                height: clamp(40px, 8vw, 60px); /* Match height to buttons */
-                padding: clamp(8px, 2vw, 12px);
-                margin-top: clamp(8px, 2vw, 12px);
-                border-width: 3px; /* Match border width with buttons */
+                height: clamp(80px, 15vw, 100px); /* Match height to buttons */
+                padding: clamp(20px, 5vw, 30px);
+                margin-top: clamp(20px, 5vw, 30px);
+                border-width: 5px; /* Match border width with buttons */
+                border-radius: var(--common-border-radius);
             }
             
             .logo-container {
-                padding: 0 clamp(8px, 3vw, 15px) clamp(8px, 3vw, 15px);
+                padding: 0 clamp(20px, 6vw, 30px) clamp(20px, 6vw, 30px);
+                border-radius: var(--common-border-radius);
             }
             
             .side-menu {
                 width: 85%;
                 max-height: 60vh;
-                top: calc(clamp(50px, 10vw, 90px) + clamp(4px, 1vw, 8px) * 2);
+                top: calc(clamp(80px, 15vw, 120px) + clamp(10px, 3vw, 15px) * 2);
+                border-radius: var(--common-border-radius);
             }
             
             .info-overlay {
-                width: 85%;
-                bottom: calc(clamp(4px, 1.8vw, 10px) + 45px);
+                width: 95%; /* Increase width for wider description */
+                max-width: 600px; /* Set a maximum width for larger screens */
+                bottom: calc(clamp(10px, 3vw, 20px) + 50px);
+                border-radius: var(--common-border-radius);
             }
             
             .preview-container {
                 width: 70%;
-                height: 100px;
+                height: 150px;
+                border-radius: var(--common-border-radius);
             }
             
             .menu-section h2 {
-                font-size: 1.1em;
+                font-size: 1.4em;
             }
             
             .menu-section li {
-                padding: 3px 0;
-                font-size: 0.9em;
+                padding: 6px 0;
+                font-size: 1.2em;
             }
             
             /* Preserve original object-fit settings */
@@ -533,11 +541,13 @@
             .contact-buttons-container {
                 width: 42.5%;  /* Half of the previous 85% */
                 max-width: 42.5%;
+                border-radius: var(--common-border-radius);
             }
             
             .contact-button {
-                padding: 10px;
-                font-size: clamp(14px, 2.2vw, 18px);
+                padding: 20px;
+                font-size: clamp(20px, 4vw, 24px);
+                border-radius: var(--button-border-radius);
             }
             
             /* Ensure touch targets are large enough */
@@ -547,27 +557,29 @@
             
             /* Adjust icon size if using icons */
             .nav-button i, .info-button i {
-                font-size: clamp(18px, 3vw, 24px);
+                font-size: clamp(30px, 5vw, 36px);
             }
             
             .video-container {
                 height: auto; /* Allow height to be determined by content */
                 position: absolute;
-                top: calc((clamp(40px, 8vw, 60px) + clamp(8px, 2vw, 12px) * 2 + clamp(8px, 3vw, 15px)) - 10px);
-                bottom: calc((clamp(12px, 3.5vw, 18px) * 2 + clamp(18px, 3vw, 24px) + clamp(8px, 3vw, 15px) + 15px) - 15px);
+                top: calc((clamp(80px, 15vw, 100px) + clamp(20px, 5vw, 30px) * 2 + clamp(20px, 6vw, 30px)) - 10px);
+                bottom: calc((clamp(30px, 7vw, 40px) * 2 + clamp(30px, 5vw, 36px) + clamp(20px, 6vw, 30px) + 15px) - 15px);
                 left: 0;
                 right: 0;
                 margin: 0 auto;
                 width: calc(100% - 20px);
                 max-height: none;
                 overflow: hidden;
+                border-radius: var(--common-border-radius);
             }
             
             #currentVideo, #currentImage {
                 width: 100%;
                 height: 100%;
                 object-fit: contain; /* Ensure content fits proportionally */
-                border-radius: 20px;
+                border-radius: var(--common-border-radius);
+                transition: opacity 0.5s ease; /* Smoother transition */
             }
             
             /* Adjust navigation position to ensure it stays at bottom */
@@ -577,6 +589,7 @@
                 left: 0;
                 right: 0;
                 z-index: 700;
+                border-radius: var(--common-border-radius);
             }
         }
         
@@ -593,6 +606,22 @@
                 height: calc(100vh - 40px);
                 border-radius: 20px;
             }
+        }
+
+        /* Smaller buttons for small screens on computers */
+        @media (max-width: 1024px) {
+            .nav-button, .info-button {
+                padding: 10px 15px;
+                font-size: 14px;
+                border-width: 2px;
+                border-radius: var(--button-border-radius);
+            }
+        }
+
+        /* Define a common border-radius value */
+        :root {
+            --common-border-radius: 15px;
+            --button-border-radius: 5px;
         }
     </style>
 </head>
@@ -690,7 +719,7 @@
     <div class="info-overlay">
         <h1 id="projectTitle"></h1>
         <h2 id="projectSubtitle"></h2>
-        <p id="projectDescription"></p>
+        <h3 id="projectDescription"></h3>
         <div id="contactButtons" class="contact-buttons-container"></div>
     </div>
 
@@ -910,60 +939,66 @@
             
             const isVideo = src.toLowerCase().endsWith('.mp4');
             
-            if (isVideo) {
-                // Show video immediately
-                imageElement.style.display = 'none';
-                videoElement.style.display = 'block';
-                videoElement.src = src;
-                videoElement.volume = 0.1;
-                videoElement.play();
-                videoElement.style.opacity = 1;
-                
-                // Add edge-blur class if needed
-                if (src.includes('01_name.mp4')) {
-                    videoElement.classList.add('edge-blur');
-                } else {
-                    videoElement.classList.remove('edge-blur');
-                }
-            } else {
-                // Show image immediately
-                videoElement.style.display = 'none';
-                imageElement.style.display = 'block';
-                imageElement.src = src;
-                imageElement.style.opacity = 1;
-            }
+            // Fade out current media
+            videoElement.style.opacity = 0;
+            imageElement.style.opacity = 0;
             
-            // Update info if available
-            if (currentProject) {
-                document.getElementById('projectTitle').textContent = currentProject.title || '';
-                document.getElementById('projectSubtitle').textContent = currentProject.subtitle || '';
-                document.getElementById('projectDescription').textContent = currentProject.description || '';
-                
-                // Handle contact buttons
-                const buttonsContainer = document.getElementById('contactButtons');
-                if (buttonsContainer) {
-                    buttonsContainer.innerHTML = '';
+            setTimeout(() => {
+                if (isVideo) {
+                    // Show video
+                    imageElement.style.display = 'none';
+                    videoElement.style.display = 'block';
+                    videoElement.src = src;
+                    videoElement.volume = 0.1;
+                    videoElement.play();
+                    videoElement.style.opacity = 1;
                     
-                    if (currentProject.isContactPage && currentProject.buttons) {
-                        buttonsContainer.style.display = 'flex';
-                        currentProject.buttons.forEach(button => {
-                            const btn = document.createElement('a');
-                            btn.textContent = button.text;
-                            btn.href = button.action;
-                            btn.className = 'contact-button';
-                            btn.target = "_blank";
-                            buttonsContainer.appendChild(btn);
-                        });
+                    // Add edge-blur class if needed
+                    if (src.includes('01_name.mp4')) {
+                        videoElement.classList.add('edge-blur');
                     } else {
-                        buttonsContainer.style.display = 'none';
+                        videoElement.classList.remove('edge-blur');
+                    }
+                } else {
+                    // Show image
+                    videoElement.style.display = 'none';
+                    imageElement.style.display = 'block';
+                    imageElement.src = src;
+                    imageElement.style.opacity = 1;
+                }
+                
+                // Update info if available
+                if (currentProject) {
+                    document.getElementById('projectTitle').textContent = currentProject.title || '';
+                    document.getElementById('projectSubtitle').textContent = currentProject.subtitle || '';
+                    document.getElementById('projectDescription').textContent = currentProject.description || '';
+                    
+                    // Handle contact buttons
+                    const buttonsContainer = document.getElementById('contactButtons');
+                    if (buttonsContainer) {
+                        buttonsContainer.innerHTML = '';
+                        
+                        if (currentProject.isContactPage && currentProject.buttons) {
+                            buttonsContainer.style.display = 'flex';
+                            currentProject.buttons.forEach(button => {
+                                const btn = document.createElement('a');
+                                btn.textContent = button.text;
+                                btn.href = button.action;
+                                btn.className = 'contact-button';
+                                btn.target = "_blank";
+                                buttonsContainer.appendChild(btn);
+                            });
+                        } else {
+                            buttonsContainer.style.display = 'none';
+                        }
                     }
                 }
-            }
-            
-            // Preload next item in background
-            if (currentIndex < projectData.length - 1) {
-                setTimeout(() => loadMedia(currentIndex + 1), 500);
-            }
+                
+                // Preload next item in background
+                if (currentIndex < projectData.length - 1) {
+                    setTimeout(() => loadMedia(currentIndex + 1), 500);
+                }
+            }, 500); // Delay to allow fade out
         }
 
         // Update the toggleInfo function
@@ -1114,6 +1149,12 @@
 
             loadedMediaIndices.add(index);
             
+            // Preload media
+            const mediaElement = document.createElement(project.type === 'video' ? 'video' : 'img');
+            mediaElement.src = project.media;
+            mediaElement.style.display = 'none';
+            document.body.appendChild(mediaElement);
+            
             // Just mark it as loaded without waiting for full load
             loadedMediaCount++;
         }
@@ -1148,9 +1189,10 @@
                 updateMedia(videos[currentIndex]);
                 document.querySelector('.info-overlay').classList.remove('active');
 
-                // Preload the next media file with a slight delay to prioritize current display
+                // Preload the next two media files with a slight delay to prioritize current display
                 setTimeout(() => {
                     loadMedia(currentIndex + 1);
+                    loadMedia(currentIndex + 2);
                 }, 100);
             }
         }
@@ -1162,9 +1204,10 @@
                 updateMedia(videos[currentIndex]);
                 document.querySelector('.info-overlay').classList.remove('active');
 
-                // Preload with a slight delay
+                // Preload the previous two media files with a slight delay
                 setTimeout(() => {
                     loadMedia(currentIndex - 1);
+                    loadMedia(currentIndex - 2);
                 }, 100);
             }
         }
