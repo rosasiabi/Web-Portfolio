@@ -1115,8 +1115,8 @@
             // Set a maximum loading time (10 seconds)
             setTimeout(hideLoadingIndicator, 10000);
             
-            loadInitialMedia(); // Load all media files
-            updateMedia(projectData[0].media || '');
+            loadInitialMedia(); // Load the first three media files
+            updateMedia(projectData[0].media || ''); // Update to show the first media
         });
 
         // Update the loadInitialMedia function to load all media
@@ -1133,7 +1133,8 @@
                 currentIndex++;
                 updateMedia(videos[currentIndex]);
                 document.querySelector('.info-overlay').classList.remove('active');
-                document.getElementById('meVideo').style.display = 'none'; // Hide meVideo
+
+                // Load the next media file if it exists
                 loadMedia(currentIndex + INITIAL_LOAD_COUNT);
             }
         }
@@ -1144,6 +1145,9 @@
                 currentIndex--;
                 updateMedia(videos[currentIndex]);
                 document.querySelector('.info-overlay').classList.remove('active');
+
+                // Load the next media file if it exists
+                loadMedia(currentIndex + INITIAL_LOAD_COUNT);
             }
         }
 
