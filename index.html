@@ -16,8 +16,11 @@
         }
         
         .video-container {
-            position: relative;
-            width: 100vw;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100vw - 3px);
             height: 100vh;
             background-color: rgb(215, 216, 210);
             padding: 0;
@@ -48,10 +51,10 @@
         
         .nav-button-container {
             background: rgb(215, 216, 210);
-            padding: clamp(5px, 2vw, 10px);
+            padding: 10px;
             padding-bottom: 0;
             display: flex;
-            gap: clamp(5px, 2vw, 10px);
+            gap: 10px;
             border-radius: 10px 10px 0 0;
             position: relative;
             width: auto;
@@ -61,11 +64,11 @@
         .nav-button {
             background: rgba(215, 216, 210, 0.167);
             border: 2px solid #38ABF6;
-            padding: clamp(5px, 1.5vw, 10px) clamp(5px, 2vw, 10px);
-            margin-bottom: clamp(5px, 2vw, 10px);
+            padding: 10px 15px;
+            margin-bottom: 10px;
             cursor: pointer;
             border-radius: 5px;
-            font-size: clamp(14px, 2vw, 18px);
+            font-size: 16px;
             transition: all 0.3s ease;
             color: #38ABF6;
         }
@@ -92,17 +95,17 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: 0 clamp(5px, 2vw, 10px) clamp(5px, 2vw, 10px);
+            padding: 0 10px 10px;
         }
 
         .logo {
-            margin-top: clamp(5px, 2vw, 10px);
-            width: clamp(60px, 10vw, 100px);
+            margin-top: 10px;
+            width: 80px;
             height: auto;
             transition: all 0.3s;
             background: rgba(215, 216, 210, 0.167);
             border: 2px solid #38ABF6;
-            padding: clamp(5px, 1vw, 10px);
+            padding: 10px;
             border-radius: 5px;
             filter: none;
             transition: all 0.3s ease;
@@ -205,11 +208,11 @@
         .info-button {
             background: rgba(215, 216, 210, 1);
             border: 2px solid #38ABF6;
-            padding: clamp(5px, 1.5vw, 5px) clamp(5px, 2vw, 5px);
-            margin-bottom: clamp(5px, 2vw, 10px);
+            padding: 10px 15px;
+            margin-bottom: 10px;
             cursor: pointer;
             border-radius: 5px;
-            font-size: clamp(14px, 2vw, 18px);
+            font-size: 16px;
             transition: all 0.3s ease;
             color: #38ABF6;
         }
@@ -459,33 +462,31 @@
 
         /* Mobile-specific styles */
         @media (max-width: 768px), (max-device-width: 768px) {
-            .nav-button-container {
-                padding: clamp(20px, 6vw, 30px);
-                padding-bottom: 0;
-                gap: clamp(20px, 6vw, 30px);
-                border-radius: var(--common-border-radius);
+            .nav-button, .info-button {
+                padding: 10px 15px;
+                margin-bottom: 10px;
+                font-size: 16px;
+                border-width: 2px;
             }
             
-            .nav-button, .info-button {
-                padding: clamp(30px, 7vw, 40px) clamp(35px, 8vw, 45px);
-                margin-bottom: clamp(20px, 6vw, 30px);
-                font-size: clamp(30px, 5vw, 36px);
-                border-width: 5px;
-                border-radius: var(--common-border-radius);
+            .nav-button-container {
+                padding: 10px;
+                padding-bottom: 0;
+                gap: 10px;
             }
             
             .logo {
-                width: auto; /* Let width adjust based on height */
-                height: clamp(80px, 15vw, 100px); /* Match height to buttons */
-                padding: clamp(20px, 5vw, 30px);
-                margin-top: clamp(20px, 5vw, 30px);
-                border-width: 5px; /* Match border width with buttons */
-                border-radius: var(--common-border-radius);
+                width: 80px;
+                height: auto;
+                padding: 10px;
+                margin-top: 10px;
+                border-width: 2px;
+                border-radius: 5px;
             }
             
             .logo-container {
-                padding: 0 clamp(20px, 6vw, 30px) clamp(20px, 6vw, 30px);
-                border-radius: var(--common-border-radius);
+                padding: 0 10px 10px;
+                border-radius: 0 0 10px 10px;
             }
             
             .side-menu {
@@ -561,16 +562,12 @@
             }
             
             .video-container {
-                height: auto; /* Allow height to be determined by content */
-                position: absolute;
-                top: calc((clamp(80px, 15vw, 100px) + clamp(20px, 5vw, 30px) * 2 + clamp(20px, 6vw, 30px)) - 10px);
-                bottom: calc((clamp(30px, 7vw, 40px) * 2 + clamp(30px, 5vw, 36px) + clamp(20px, 6vw, 30px) + 15px) - 15px);
-                left: 0;
-                right: 0;
-                margin: 0 auto;
-                width: calc(100% - 20px);
-                max-height: none;
-                overflow: hidden;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: calc(100vw - 3px);
+                height: 100vh;
                 border-radius: var(--common-border-radius);
             }
             
@@ -589,6 +586,16 @@
                 right: 0;
                 z-index: 700;
                 border-radius: var(--common-border-radius);
+            }
+            
+            #currentImage, #currentVideo {
+                top: clamp(5px, 2vw, 10px);
+                left: clamp(5px, 2vw, 10px);
+                right: clamp(5px, 2vw, 10px);
+                bottom: clamp(5px, 2vw, 10px);
+                width: calc(100% - 2 * clamp(5px, 2vw, 10px));
+                height: calc(100% - 2 * clamp(5px, 2vw, 10px));
+                border-radius: 10px;
             }
         }
         
@@ -681,9 +688,9 @@
     </div>
 
     <div class="video-container">
-        <img id="currentImage" src="01_name.mp4" alt="Welcome Image">
+        <img id="currentImage" src="me.mp4" alt="Welcome Image">
         <video id="currentVideo" autoplay muted playsinline loop style="display: none;">
-            <source src="01_name.mp4" type="video/mp4">
+            <source src="me.mp4" type="video/mp4">
         </video>
         <div id="contactButtons" class="contact-buttons-container"></div>
     </div>
@@ -715,7 +722,7 @@
         // Define project data first
         const projectData = [
             {
-                media: '01_name.mp4',
+                media: 'me.mp4',
                 type: 'video',
                 title: 'Welcome',
                 subtitle: 'Portfolio Navigation',
