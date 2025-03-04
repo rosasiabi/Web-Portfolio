@@ -922,6 +922,44 @@
             sideMenu.classList.toggle('active');
         });
         
+        // Preload all media files at the start
+        function preloadAllMedia() {
+            projectData.forEach((project, index) => {
+                if (!project || !project.media) return;
+                
+                const src = project.media;
+                const isVideo = src.toLowerCase().endsWith('.mp4');
+                
+                if (isVideo) {
+                    // Preload video
+                    const video = document.createElement('video');
+                    video.src = src;
+                    video.preload = 'auto';
+                    video.style.display = 'none';
+                    video.addEventListener('loadeddata', () => {
+                        loadedMediaCount++;
+                        loadedMediaIndices.add(index);
+                    });
+                    document.body.appendChild(video);
+                    
+                    // Store reference to preloaded video
+                    project.preloadedElement = video;
+                } else {
+                    // Preload image
+                    const img = new Image();
+                    img.src = src;
+                    img.onload = () => {
+                        loadedMediaCount++;
+                        loadedMediaIndices.add(index);
+                    };
+                    
+                    // Store reference to preloaded image
+                    project.preloadedElement = img;
+                }
+            });
+        }
+
+        // Modified updateMedia to use preloaded elements when available
         function updateMedia(src) {
             const videoElement = document.getElementById('currentVideo');
             const imageElement = document.getElementById('currentImage');
@@ -1175,21 +1213,18 @@
             loadingIndicator.style.display = 'none'; // Immediately hide without fade
         }
         
-        // Immediately hide loading indicator on DOMContentLoaded
+        // Start preloading all media after the first item is displayed
         document.addEventListener('DOMContentLoaded', () => {
-            // Hide loading indicator almost immediately
+            // Hide loading indicator after a short delay
             setTimeout(hideLoadingIndicator, 800);
             
-            // Only load and display the first media item
+            // Load and display the first media item
             if (projectData.length > 0) {
-                // Use updateMedia function to ensure consistent styling
                 currentIndex = 0;
-                updateMedia(projectData[0].media); // This will load me.mp4 first
+                updateMedia(projectData[0].media);
                 
-                // Load next item in background with delay
-                setTimeout(() => {
-                    if (projectData.length > 1) loadMedia(1);
-                }, 1000);
+                // Start preloading all other media in the background
+                setTimeout(preloadAllMedia, 1000);
             }
         });
 
