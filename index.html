@@ -935,26 +935,54 @@
             const isVideo = src.toLowerCase().endsWith('.mp4');
             
             if (isVideo) {
-                // Show video immediately
-                imageElement.style.display = 'none';
-                videoElement.style.display = 'block';
-                videoElement.src = src;
-                videoElement.volume = 0.1;
-                videoElement.play();
-                videoElement.style.opacity = 1;
-                
-                // Add edge-blur class if needed
-                if (src.includes('01_name.mp4')) {
-                    videoElement.classList.add('edge-blur');
-                } else {
-                    videoElement.classList.remove('edge-blur');
+                // Fade out current content
+                if (imageElement.style.display === 'block') {
+                    imageElement.style.opacity = 0;
+                } else if (videoElement.style.display === 'block') {
+                    videoElement.style.opacity = 0;
                 }
+                
+                // Wait for fade out to complete
+                setTimeout(() => {
+                    // Show video
+                    imageElement.style.display = 'none';
+                    videoElement.style.display = 'block';
+                    videoElement.src = src;
+                    videoElement.volume = 0.1;
+                    videoElement.play();
+                    
+                    // Fade in new content
+                    setTimeout(() => {
+                        videoElement.style.opacity = 1;
+                    }, 50);
+                    
+                    // Add edge-blur class if needed
+                    if (src.includes('01_name.mp4')) {
+                        videoElement.classList.add('edge-blur');
+                    } else {
+                        videoElement.classList.remove('edge-blur');
+                    }
+                }, 300);
             } else {
-                // Show image immediately
-                videoElement.style.display = 'none';
-                imageElement.style.display = 'block';
-                imageElement.src = src;
-                imageElement.style.opacity = 1;
+                // Fade out current content
+                if (videoElement.style.display === 'block') {
+                    videoElement.style.opacity = 0;
+                } else if (imageElement.style.display === 'block') {
+                    imageElement.style.opacity = 0;
+                }
+                
+                // Wait for fade out to complete
+                setTimeout(() => {
+                    // Show image
+                    videoElement.style.display = 'none';
+                    imageElement.style.display = 'block';
+                    imageElement.src = src;
+                    
+                    // Fade in new content
+                    setTimeout(() => {
+                        imageElement.style.opacity = 1;
+                    }, 50);
+                }, 300);
             }
             
             // Update info if available
@@ -1156,7 +1184,7 @@
             if (projectData.length > 0) {
                 // Use updateMedia function to ensure consistent styling
                 currentIndex = 0;
-                updateMedia(projectData[0].media);
+                updateMedia(projectData[0].media); // This will load me.mp4 first
                 
                 // Load next item in background with delay
                 setTimeout(() => {
