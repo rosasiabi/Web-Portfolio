@@ -22,15 +22,13 @@
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
             width: 100%;
             height: 100%;
             background-color: rgb(215, 216, 210);
             padding: 0;
             box-sizing: border-box;
-            border-radius: 5px;
             overflow: hidden;
+            margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -285,8 +283,13 @@
 
         /* Add CSS to ensure image display */
         #currentImage, #currentVideo {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
             object-fit: cover;
             border-radius: 10px;
         }
@@ -546,20 +549,24 @@
             }
             
             .video-container {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: calc(100vw);
-                height: 100vh;
-                border-radius: var(--common-border-radius);
-            }
-            
-            #currentVideo, #currentImage {
                 width: 100%;
                 height: 100%;
-                object-fit: contain; /* Ensure content fits proportionally */
-                border-radius: var(--common-border-radius);
+                top: 0;
+                left: 0;
+                transform: none;
+                border-radius: 0;
+            }
+            
+            #currentImage, #currentVideo {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                width: calc(100% - 20px);
+                height: calc(100% - 20px);
+                object-fit: contain;
+                border-radius: 10px;
             }
             
             /* Adjust navigation position to ensure it stays at bottom */
@@ -571,16 +578,6 @@
                 z-index: 700;
                 border-radius: var(--common-border-radius);
             }
-            
-            #currentImage, #currentVideo {
-                top: 10px;
-                left: 10px;
-                right: 10px;
-                bottom: 10px;
-                width: calc(100% - 20px);
-                height: calc(100% - 20px);
-                border-radius: 10px;
-            }
         }
         
         /* Add touch swipe support */
@@ -589,14 +586,15 @@
         }
 
         /* Larger screens */
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
             .video-container {
                 top: 20px;
                 left: 20px;
                 right: 20px;
                 bottom: 20px;
-                width: auto;
-                height: auto;
+                width: calc(100% - 40px);
+                height: calc(100% - 40px);
+                border-radius: 20px;
             }
             
             #currentImage, #currentVideo {
